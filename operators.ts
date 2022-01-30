@@ -1,13 +1,18 @@
 var ndarray = require("ndarray");
 var ops = require("ndarray-ops");
 
+// readability hack, signatures of ndarray ops is any
+type Tensor = any;
+
 // some test values
 var d = ndarray(new Float32Array([1.0, 1.0, 1.0, 1.0]), [2, 2]);
 var x = ndarray(new Float32Array([1.0, 0.0, 2.0, 3.0]), [2, 2]);
 var x2 = ndarray(new Float32Array([1.0, 0.0, -2.0, 3.0]), [2, 2]);
-
-// readability hack, signatures of ndarray ops is any
-type Tensor = any;
+var ls = [x, x2];
+var ls2: [Tensor, Tensor][] = [
+  [x, x2],
+  [x, x2],
+];
 
 function apply2(
   x: Tensor,
@@ -35,6 +40,13 @@ function id(x: Tensor): Tensor {
 
 function eq(x: Tensor, y: Tensor): Tensor {
   return apply2(x, y, ops.eq);
+}
+
+function neg(x: Tensor): Tensor {
+  var result = ndarray(new Float32Array(x.data), x.shape);
+  ops.assign(result, x);
+  ops.mulseq(result, -1.0);
+  return result;
 }
 
 function add(x: Tensor, y: Tensor): Tensor {
@@ -95,6 +107,19 @@ function log_back(x: Tensor, d: Tensor): Tensor {
   return result;
 }
 
-function map(fn: (x: Tensor) => Tensor) {
-  // TODO
+function map(fn: (x: Tensor) => Tensor): (ls: Tensor[]) => Tensor[] {
+  // usage example:
+  // map(a => add(a, x2))([x, x])
+  return (ls: Tensor[]) => ls.map(fn);
+}
+
+function negList(ls: Tensor[]) {
+  return map(neg)(ls);
+}
+
+function map2(
+  fn: (x: Tensor, y: Tensor) => Tensor
+): (ls: [Tensor, Tensor][]) => Tensor[] {
+  // usage: map2(add)(ls2)
+  return (ls: [Tensor, Tensor][]) => ls.map((t) => fn(t[0], t[1]));
 }
