@@ -123,3 +123,13 @@ function map2(
   // usage: map2(add)(ls2)
   return (ls: [Tensor, Tensor][]) => ls.map((t) => fn(t[0], t[1]));
 }
+
+function zip(ls1: Tensor[], ls2: Tensor[]): [Tensor, Tensor][]{
+  // TODO
+  return [];
+}
+
+function addLists(ls1: Tensor[], ls2: Tensor[]) {
+  // TODO
+  // map2(add, 
+}

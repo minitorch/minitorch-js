@@ -9,3 +9,6 @@ autoformat-watcher:
 
 install-prettier:
 	npm install --save-dev --save-exact prettier
+
+watch:
+	npx tsc -w *.ts
